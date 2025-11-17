@@ -1,0 +1,33 @@
+
+/*
+  Undirected grap cycle detection using BFS.
+  Process each node by pushing to a queue as {node,parent}, mark the node as visited.
+  Pop the node and traverse it's neighbours.
+    Ignore the parent and push othe rnon visited nodes.
+    If there is cycle then there appears a node which is already visited and not parent of current node.
+*/
+
+bool detectCycle(vector<vector int> adjList) {
+    int nodes = adjList.size();
+    vector<bool> visited(nodes, false);
+    queue<pair<int,int>> q;
+    q.push(make_pair(0,-1));
+    visited[0] = true;
+
+    while(!q.empty()) {
+
+        int node = q.front().first;
+        int parent = q.front().second;
+        q.pop();
+        for(const int &neighbour: adjList[node]) {
+            /* if neighbour is not parent and is already visited then a cycle */
+            if(visited[neighbour] && parent!=neighbour) return true;
+            
+            if(!visited[neighbour]) {
+                q.push(make_pair(neighbour, node));
+                visited[neighbour] = true;
+            }
+        }
+    }
+    return false;
+}
