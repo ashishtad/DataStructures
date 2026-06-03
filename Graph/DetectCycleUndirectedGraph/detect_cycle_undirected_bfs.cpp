@@ -7,27 +7,62 @@
     If there is cycle then there appears a node which is already visited and not parent of current node.
 */
 
-bool detectCycle(vector<vector int> adjList) {
-    int nodes = adjList.size();
-    vector<bool> visited(nodes, false);
-    queue<pair<int,int>> q;
-    q.push(make_pair(0,-1));
-    visited[0] = true;
+#include <bits/stdc++.h>
+using namespace std;
 
-    while(!q.empty()) {
-
-        int node = q.front().first;
-        int parent = q.front().second;
-        q.pop();
-        for(const int &neighbour: adjList[node]) {
-            /* if neighbour is not parent and is already visited then a cycle */
-            if(visited[neighbour] && parent!=neighbour) return true;
-            
-            if(!visited[neighbour]) {
-                q.push(make_pair(neighbour, node));
-                visited[neighbour] = true;
+class Solution {
+  private: 
+  bool detect(int src, vector<int> adj[], int vis[]) {
+      vis[src] = 1; 
+      // store <source node, parent node>
+      queue<pair<int,int>> q; 
+      q.push({src, -1}); 
+      // traverse until queue is not empty
+      while(!q.empty()) {
+          int node = q.front().first; 
+          int parent = q.front().second; 
+          q.pop(); 
+          
+          // go to all adjacent nodes
+          for(auto adjacentNode: adj[node]) {
+              // if adjacent node is unvisited
+              if(!vis[adjacentNode]) {
+                  vis[adjacentNode] = 1; 
+                  q.push({adjacentNode, node}); 
+              }
+              // if adjacent node is visited and is not it's own parent node
+              else if(parent != adjacentNode) {
+                  // yes it is a cycle
+                  return true; 
+              }
+          }
+      }
+      // there's no cycle
+      return false; 
+  }
+  public:
+    // Function to detect cycle in an undirected graph.
+    bool isCycle(int V, vector<int> adj[]) {
+        // initialise them as unvisited 
+        int vis[V] = {0};
+        for(int i = 0;i<V;i++) {
+            if(!vis[i]) {
+                if(detect(i, adj, vis)) return true; 
             }
         }
+        return false; 
     }
-    return false;
+};
+
+int main() {
+    
+    // V = 4, E = 2
+    vector<int> adj[4] = {{}, {2}, {1, 3}, {2}};
+    Solution obj;
+    bool ans = obj.isCycle(4, adj);
+    if (ans)
+        cout << "1\n";
+    else
+        cout << "0\n";
+    return 0;
 }
